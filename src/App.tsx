@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronRight, ArrowRight, Check, MapPin, Instagram, Globe, Ticket, MessageCircle, Navigation, Camera, Share2 } from 'lucide-react';
 
@@ -8,54 +8,59 @@ const QUESTIONS = [
   {
     id: 1,
     question: "Тебе больше нравится:",
-    options: ["Бездорожье", "Шоссе"]
+    options: ["Бездорожье", "Шоссе"],
+    image: "https://i.ibb.co/8g4vdRRp/q1-offroad-vs-highway.png"
   },
   {
     id: 2,
     question: "Какой стиль предпочтешь:",
-    options: ["Яркий незабываемый", "Строгий, но изысканный"]
+    options: ["Яркий незабываемый", "Строгий, но изысканный"],
+    image: "https://i.ibb.co/xtTnjbsx/q2-bright-vs-refined.png"
   },
   {
     id: 3,
     question: "Ты чаще:",
-    options: ["Любишь гулять один", "Всегда в компании"]
+    options: ["Любишь гулять один", "Всегда в компании"],
+    image: "https://i.ibb.co/xNJ1yJ6/q3-solo-vs-company.png"
   },
   {
     id: 4,
     question: "Что выберешь:",
-    options: ["Контроль и комфорт", "Адреналин"]
+    options: ["Контроль и комфорт", "Адреналин"],
+    image: "https://i.ibb.co/7d6DYBc3/q4-control-vs-adrenaline.png"
   },
   {
     id: 5,
     question: "Тебе по душе:",
-    options: ["Все новое и современное", "Только классика"]
+    options: ["Все новое и современное", "Только классика"],
+    image: "https://i.ibb.co/0yw0dDs2/q5-modern-vs-classic.png"
   }
 ];
 
 const MOTORCYCLES = {
   ENDURO: {
     name: "Иж К-16 (Покоритель Бездорожья)",
-    image: "https://images.unsplash.com/photo-1620050858102-bfbe7a876ae9?auto=format&fit=crop&q=80&w=800",
+    image: "https://i.ibb.co/MDVMPMZH/izh-k16-offroad-conqueror.png",
     description: "Для тебя нет преград. Адреналин, грязь, прыжки и полная свобода — это твоя стихия."
   },
   SPORT: {
     name: "Иж Планета Спорт (Советский Стритфайтер)",
-    image: "https://images.unsplash.com/photo-1614165936126-2ed18e471b3b?auto=format&fit=crop&q=80&w=800",
+    image: "https://i.ibb.co/cXpd4CPn/izh-planeta-sport-streetfighter.png",
     description: "Яркий, дерзкий, быстрый! Ты любишь обращать на себя внимание и быть впереди потока."
   },
   SIDECAR: {
     name: "Иж Юпитер-5 с коляской (Душа Компании)",
-    image: "https://images.unsplash.com/photo-1627961205943-7f7cd4af7dc0?auto=format&fit=crop&q=80&w=800",
+    image: "https://i.ibb.co/gMmMMy9R/izh-jupiter5-sidecar-soul-of-company.png",
     description: "Ты обожаешь путешествовать с друзьями и ценишь надежность, комфорт и приятную компанию."
   },
   MODERN: {
     name: "Современный Кастом (Новая школа)",
-    image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&q=80&w=800",
+    image: "https://i.ibb.co/YTwDPBn3/modern-custom-new-school.png",
     description: "Ты следишь за трендами, ценишь технологии и современный дизайн, но уважаешь корни."
   },
   CLASSIC: {
     name: "Иж-49 (Легендарная Классика)",
-    image: "https://images.unsplash.com/photo-1558981403-c5f9899a289f?auto=format&fit=crop&q=80&w=800",
+    image: "https://i.ibb.co/KpzWhLyV/izh49-legendary-classic.png",
     description: "Строгий, изысканный и нестареющий. Ты ценишь историю, спокойствие и проверенную временем надежность."
   }
 };
@@ -66,6 +71,20 @@ export default function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Preload images to ensure they display quickly
+    const imagesToPreload = [
+      "https://i.ibb.co/60L8CXPT/photo-2026-04-24-21-16-33.jpg", // Background
+      ...QUESTIONS.map(q => q.image),
+      ...Object.values(MOTORCYCLES).map(m => m.image)
+    ].filter(Boolean) as string[];
+
+    imagesToPreload.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   const handleStart = () => {
     setScreen('nickname');
@@ -124,8 +143,8 @@ export default function App() {
       className="flex flex-col items-center justify-center min-h-screen relative p-6 text-center"
     >
       <img 
-        src="https://images.unsplash.com/photo-1558981033-0f0309284409?auto=format&fit=crop&q=80&w=2000"
-        alt="Черный мотоцикл крупным планом"
+        src="https://i.ibb.co/60L8CXPT/photo-2026-04-24-21-16-33.jpg"
+        alt="Ижевский мотомузей - фон"
         referrerPolicy="no-referrer"
         className="absolute inset-0 w-full h-full object-cover object-center opacity-60 pointer-events-none" 
       />
@@ -224,13 +243,24 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div 
             key={currentQuestion}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.3 }}
             className="flex-1 flex flex-col"
           >
-            <h2 className="text-3xl font-bold text-white mb-8 leading-tight">
+            {question.image && (
+              <div className="w-full h-48 sm:h-56 mb-6 rounded-2xl overflow-hidden relative shadow-lg ring-1 ring-white/10 shrink-0">
+                <img 
+                  src={question.image} 
+                  alt={question.question}
+                  className="absolute inset-0 w-full h-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 to-transparent" />
+              </div>
+            )}
+            
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 leading-tight drop-shadow-md">
               {question.question}
             </h2>
 
@@ -289,45 +319,47 @@ export default function App() {
         key="result"
         initial={{ opacity: 0, scale: 0.95 }} 
         animate={{ opacity: 1, scale: 1 }} 
-        className="min-h-screen bg-zinc-950 pb-12"
+        className="min-h-screen bg-zinc-950 py-10 sm:py-16 px-4 sm:px-6 flex flex-col items-center justify-start"
       >
-        <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
-          <div className="absolute inset-0 bg-black/40 z-10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent z-10" />
-          <img 
-            src={resultItem.image} 
-            alt={resultItem.name} 
-            referrerPolicy="no-referrer"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-          />
-          <div className="absolute bottom-0 left-0 right-0 p-6 z-20 max-w-2xl mx-auto w-full">
-            <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium mb-3">
+        <div className="w-full max-w-2xl mx-auto space-y-8">
+          
+          {/* Header */}
+          <div className="text-center space-y-4">
+             <span className="inline-block px-4 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-[#f45540] text-sm font-bold uppercase tracking-wider shadow-sm">
               Твой результат, {nickname}
             </span>
-            <h2 className="text-4xl md:text-5xl font-black text-white leading-tight mb-2">
+            <h2 className="text-3xl md:text-5xl font-black text-white leading-tight drop-shadow-md">
               {resultItem.name}
             </h2>
           </div>
-        </div>
 
-        <div className="max-w-2xl mx-auto w-full px-6 -mt-4 relative z-20 space-y-8">
+          {/* Image */}
+          <div className="w-full rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.5)] ring-1 ring-white/10 bg-zinc-900 relative">
+             <img 
+               src={resultItem.image} 
+               alt={resultItem.name}
+               className="w-full h-auto object-cover object-center max-h-[40vh] md:max-h-[50vh]" 
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/40 to-transparent pointer-events-none" />
+          </div>
+
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 md:p-8 shadow-2xl">
-            <p className="text-zinc-300 text-lg leading-relaxed mb-6">
+            <p className="text-zinc-200 text-lg md:text-xl font-medium leading-relaxed mb-8 text-center">
               {resultItem.description}
             </p>
-            <div className="h-px w-full bg-zinc-800 mb-6" />
+            <div className="h-px w-full bg-zinc-800 mb-8" />
             
             <div className="bg-gradient-to-br from-[#f45540] to-red-600 rounded-2xl p-6 relative overflow-hidden text-white shadow-lg">
               <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
               <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-black/10 rounded-full blur-2xl" />
               
-              <div className="flex items-start gap-4 relative z-10">
-                <div className="bg-white/20 p-3 rounded-full shrink-0">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 relative z-10 text-center sm:text-left">
+                <div className="bg-white/20 p-4 rounded-full shrink-0">
                   <Ticket className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl mb-1">Скидка 10%</h3>
-                  <p className="text-white/90 text-sm leading-snug">
+                  <h3 className="font-black text-2xl mb-2">Скидка 10%</h3>
+                  <p className="text-white/90 text-sm md:text-base leading-snug font-medium">
                     Покажи этот экран на кассе и получи скидку на посещение Ижевского мотомузея Кожушковых!
                   </p>
                 </div>
@@ -336,11 +368,11 @@ export default function App() {
           </div>
 
           <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-3xl p-6 md:p-8">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center justify-center sm:justify-start gap-2">
               <MapPin className="w-5 h-5 text-[#f45540]" />
               О мотомузее
             </h3>
-            <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-6">
+            <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-6 text-center sm:text-left">
               Ижевский мотомузей Кожушковых — это уникальная частная коллекция отечественных и зарубежных мотоциклов. У нас ты погрузишься в историю мотостроения, увидишь редкие модели в идеальном состоянии и почувствуешь настоящую байкерскую атмосферу. Мы регулярно проводим экскурсии и мероприятия!
             </p>
             
@@ -369,7 +401,7 @@ export default function App() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4">
             <button 
               onClick={() => {
                 if (navigator.share) {
